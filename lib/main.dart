@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:rvcl/routes/routes.dart';
+import 'package:rvcl/models/databaseActiviti.dart';
 
-void main() {
+Future<void> main() async {
+  await mongoDataBase.connect();
   runApp(const MyApp());
 }
 
@@ -9,13 +13,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Material(
-          child: Center(
-              child: Text(
-        "app making work on",
-        style: TextStyle(fontSize: 100),
-      ))),
+    return GetMaterialApp(
+      title: "RVCL",
+      getPages: AppPages.routes,
+      initialRoute: AppPages.initial,
     );
   }
 }
