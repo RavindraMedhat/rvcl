@@ -4,19 +4,23 @@ import 'dart:convert';
 class LoginRequest {
   String username;
   String password;
+  String role;
 
   LoginRequest({
     required this.username,
     required this.password,
+    required this.role,
   });
 
   LoginRequest copyWith({
     String? username,
     String? password,
+    String? role,
   }) {
     return LoginRequest(
       username: username ?? this.username,
       password: password ?? this.password,
+      role: role ?? this.role,
     );
   }
 
@@ -24,6 +28,7 @@ class LoginRequest {
     return <String, dynamic>{
       'username': username,
       'password': password,
+      'role': role,
     };
   }
 
@@ -31,10 +36,15 @@ class LoginRequest {
     return LoginRequest(
       username: map['username'] as String,
       password: map['password'] as String,
+      role: map['role'] as String,
     );
   }
 
-  String toJson() => json.encode(toMap());
+  Map<String, dynamic> toJson() => {
+        "username": username,
+        "password": password,
+        "role": role,
+      };
 
   factory LoginRequest.fromJson(String source) =>
       LoginRequest.fromMap(json.decode(source) as Map<String, dynamic>);

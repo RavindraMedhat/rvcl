@@ -8,23 +8,6 @@ import 'login_request.dart';
 class mongoDataBase {
   static var db, ucoll;
 
-  static Future<List<Map<String, dynamic>>> tryToLogin(LoginRequest lr) async {
-    ucoll = db.collection(MongoCollections.user);
-    final arrayData =
-        await ucoll.find(where.eq("username", lr.username)).toList();
-    return arrayData;
-  }
-
-  Future<bool> isUserThere(String username) async {
-    ucoll = db.collection(MongoCollections.user);
-    final arrayData = await ucoll.find(where.eq("username", username)).toList();
-    if (arrayData.length == 0) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   static connect() async {
     // print("object in conn");
     db = await Db.create(mongo_url);
@@ -35,4 +18,27 @@ class mongoDataBase {
     // var st = db.serverStatus();
     // print(st);
   }
+
+  static Future<List<Map<String, dynamic>>> tryToLogin(LoginRequest lr) async {
+    ucoll = db.collection(MongoCollections.user);
+    final arrayData =
+        await ucoll.find(where.eq("username", lr.username)).toList();
+    return arrayData;
+  }
+
+  static Future<bool> isUserThere(String username) async {
+    ucoll = db.collection(MongoCollections.user);
+    final arrayData = await ucoll.find(where.eq("username", username)).toList();
+    if (arrayData.length == 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  static AddUser(LoginRequest lr) async {
+    ucoll = db.collection(MongoCollections.user);
+    await ucoll.insertOne(lr.toJson());
+  }
+  
 }

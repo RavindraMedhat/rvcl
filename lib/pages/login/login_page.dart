@@ -3,8 +3,10 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rvcl/localData/loginData.dart';
 import 'package:rvcl/models/databaseActiviti.dart';
 import 'package:rvcl/models/login_request.dart';
+import 'package:rvcl/models/userInfo.dart';
 import 'package:rvcl/routes/routes.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,6 +19,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool changebutton = false;
   final _formKey = GlobalKey<FormState>();
+  var lr;
   static String pass = "";
   final TextEditingController loginform_password = TextEditingController();
   final TextEditingController loginform_username = TextEditingController();
@@ -30,9 +33,23 @@ class _LoginPageState extends State<LoginPage> {
       // ignore: use_build_context_synchronously
       // print("first object");
 
-      // setLogin(userinfo.username, userinfo.userProfile);
+      setLogin(lr[0]['username'].toString(), lr[0]['password'].toString(),
+          lr[0]['role'].toString());
 
-      Get.offNamed(Routes.temp);
+      userInfo.username = lr[0]['username'].toString();
+      userInfo.role = lr[0]['role'].toString();
+      print(userInfo.role);
+      Get.offNamed(userInfo.username == ""
+          ? Routes.LOGIN
+          : userInfo.role == "customer"
+              ? Routes.CUSTOMERHOME
+              : userInfo.role == "employee"
+                  ? Routes.EMPLOYEEHOME
+                  : userInfo.role == "owner"
+                      ? Routes.OWNERHOME
+                      : userInfo.role == "accounter"
+                          ? Routes.OWNERHOME
+                          : Routes.temp);
       // closeApp(context);
 
       setState(() {
@@ -91,9 +108,10 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         onChanged: (value) async {
                           LoginRequest tlr = LoginRequest(
+                              role: "",
                               username: loginform_username.text,
                               password: loginform_password.text);
-                          var lr = await mongoDataBase.tryToLogin(tlr);
+                          lr = await mongoDataBase.tryToLogin(tlr);
                           print(lr.toString());
                           if (lr.length != 0) {
                             pass = lr[0]['password'].toString();

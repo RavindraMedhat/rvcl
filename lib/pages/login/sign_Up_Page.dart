@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rvcl/models/databaseActiviti.dart';
 import 'package:rvcl/models/login_request.dart';
 import 'package:rvcl/routes/routes.dart';
 
@@ -12,8 +13,9 @@ class SingUpPage extends StatefulWidget {
 
 class _SingUpPageState extends State<SingUpPage> {
   // String name = "";
+  LoginRequest sr = LoginRequest(password: "", username: "", role: "");
   bool changebutton = false;
-
+  bool userThere = true;
   final _formKey = GlobalKey<FormState>();
 
   moveToHome(BuildContext context) async {
@@ -21,14 +23,13 @@ class _SingUpPageState extends State<SingUpPage> {
       setState(() {
         changebutton = true;
       });
-
+      mongoDataBase.AddUser(sr);
       await Get.offNamed(Routes.temp);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    LoginRequest sr = LoginRequest(password: "", username: "");
     return Material(
       color: Colors.white,
       child: SingleChildScrollView(
@@ -60,10 +61,17 @@ class _SingUpPageState extends State<SingUpPage> {
                           hintText: "Enter User Name", labelText: "User Name"),
                       validator: (value) {
                         sr.username = value.toString();
+                        sr.role = "customer";
                         if (value!.isEmpty) {
                           return "Usrename can not be empty";
+                        } else if (userThere) {
+                          return "Username alredy used";
                         }
                         return null;
+                      },
+                      onChanged: (value) async {
+                        userThere =
+                            await mongoDataBase.isUserThere(value.toString());
                       },
                     ),
                     TextFormField(
