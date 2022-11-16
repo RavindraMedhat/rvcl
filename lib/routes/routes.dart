@@ -7,6 +7,7 @@ import 'package:rvcl/pages/login/login_page.dart';
 import 'package:rvcl/pages/login/sign_Up_Page.dart';
 import 'package:rvcl/pages/ownerPages/owner_home_page.dart';
 import 'package:rvcl/pages/temp.dart';
+import 'package:rvcl/splash.dart';
 
 class Routes {
   static const LOGIN = "/login";
@@ -15,6 +16,7 @@ class Routes {
   static const OWNERHOME = "/ownerHome";
   static const ACCOUNTERHOME = "/accounter";
   static const EMPLOYEEHOME = "/employeeHome";
+  static const SPLASH = "/splashPage";
 
   static const temp = "/temp";
 }
@@ -33,6 +35,10 @@ class AppPages {
                       : Routes.temp;
 
   static final routes = [
+    GetPage(
+      name: Routes.SPLASH,
+      page: () => splash(),
+    ),
     GetPage(
       name: Routes.LOGIN,
       page: () => LoginPage(),
