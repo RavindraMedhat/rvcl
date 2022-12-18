@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                   : userInfo.role == "owner"
                       ? Routes.OWNERHOME
                       : userInfo.role == "accounter"
-                          ? Routes.OWNERHOME
+                          ? Routes.ACCOUNTERHOME
                           : Routes.temp);
       // closeApp(context);
 
