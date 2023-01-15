@@ -2,7 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rvcl/localData/loginData.dart';
-import 'package:rvcl/models/databaseActiviti.dart';
+import 'package:rvcl/Web_Service/databaseActiviti.dart';
 import 'package:rvcl/routes/routes.dart';
 
 class splash extends StatefulWidget {
@@ -29,7 +29,7 @@ class _splashState extends State<splash> {
   setUp() async {
     if (await checkCon()) {
       print("yes");
-      await mongoDataBase.connect();
+      // await loginApi.connect(); 
       await checkLogin();
       Get.offAllNamed(AppPages.initial);
     } else {

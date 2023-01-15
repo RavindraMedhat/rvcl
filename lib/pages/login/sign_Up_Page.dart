@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rvcl/models/databaseActiviti.dart';
-import 'package:rvcl/models/login_request.dart';
+import 'package:rvcl/Web_Service/databaseActiviti.dart';
+import 'package:rvcl/models/signup_request.dart';
 import 'package:rvcl/routes/routes.dart';
 
 class SingUpPage extends StatefulWidget {
@@ -13,17 +13,18 @@ class SingUpPage extends StatefulWidget {
 
 class _SingUpPageState extends State<SingUpPage> {
   // String name = "";
-  LoginRequest sr = LoginRequest(password: "", username: "", role: "");
+  SignUpRequest sr = SignUpRequest(password: "", username: "", role: "");
   bool changebutton = false;
   bool userThere = true;
   final _formKey = GlobalKey<FormState>();
 
   moveToHome(BuildContext context) async {
+    userThere = (await loginApi.isUserThere(sr.username))!;
     if (_formKey.currentState!.validate()) {
       setState(() {
         changebutton = true;
       });
-      mongoDataBase.AddUser(sr);
+      loginApi.AddUser(sr);
       await Get.offNamed(Routes.temp);
     }
   }
@@ -69,10 +70,7 @@ class _SingUpPageState extends State<SingUpPage> {
                         }
                         return null;
                       },
-                      onChanged: (value) async {
-                        userThere =
-                            await mongoDataBase.isUserThere(value.toString());
-                      },
+                      onChanged: (value) => sr.username = value,
                     ),
                     TextFormField(
                       obscureText: true,

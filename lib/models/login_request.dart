@@ -4,23 +4,19 @@ import 'dart:convert';
 class LoginRequest {
   String username;
   String password;
-  String role;
 
   LoginRequest({
     required this.username,
     required this.password,
-    required this.role,
   });
 
   LoginRequest copyWith({
     String? username,
     String? password,
-    String? role,
   }) {
     return LoginRequest(
       username: username ?? this.username,
       password: password ?? this.password,
-      role: role ?? this.role,
     );
   }
 
@@ -28,7 +24,6 @@ class LoginRequest {
     return <String, dynamic>{
       'username': username,
       'password': password,
-      'role': role,
     };
   }
 
@@ -36,16 +31,43 @@ class LoginRequest {
     return LoginRequest(
       username: map['username'] as String,
       password: map['password'] as String,
-      role: map['role'] as String,
     );
   }
 
   Map<String, dynamic> toJson() => {
         "username": username,
         "password": password,
-        "role": role,
       };
 
   factory LoginRequest.fromJson(String source) =>
       LoginRequest.fromMap(json.decode(source) as Map<String, dynamic>);
+}
+
+// To parse this JSON data, do
+//
+//     final isUserThere = isUserThereFromJson(jsonString);
+
+IsUserThere? isUserThereFromJson(String str) =>
+    IsUserThere.fromJson(json.decode(str));
+
+String isUserThereToJson(IsUserThere? data) => json.encode(data!.toJson());
+
+class IsUserThere {
+  IsUserThere({
+    this.isUserThere,
+    this.message,
+  });
+
+  bool? isUserThere;
+  String? message;
+
+  factory IsUserThere.fromJson(Map<String, dynamic> json) => IsUserThere(
+        isUserThere: json["isUserThere"],
+        message: json["message"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "isUserThere": isUserThere,
+        "message": message,
+      };
 }

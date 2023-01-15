@@ -4,8 +4,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rvcl/localData/loginData.dart';
-import 'package:rvcl/models/databaseActiviti.dart';
+import 'package:rvcl/Web_Service/databaseActiviti.dart';
 import 'package:rvcl/models/login_request.dart';
+import 'package:rvcl/models/login_response.dart';
 import 'package:rvcl/models/userInfo.dart';
 import 'package:rvcl/routes/routes.dart';
 
@@ -19,12 +20,22 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool changebutton = false;
   final _formKey = GlobalKey<FormState>();
-  var lr;
+  LoginResponse lrs = LoginResponse(success: false, role: "");
   static String pass = "";
+  bool userThere = true;
   final TextEditingController loginform_password = TextEditingController();
   final TextEditingController loginform_username = TextEditingController();
 
   moveToHome(BuildContext context) async {
+    userThere = true;
+    lrs = (await loginApi.tryToLogin(LoginRequest(
+        username: loginform_username.text,
+        password: loginform_password.text)))!;
+
+    if (lrs.success.toString() == "false" || lrs.success.toString() == "null") {
+      userThere = (await loginApi.isUserThere(loginform_username.text))!;
+    }
+
     if (_formKey.currentState!.validate()) {
       setState(() {
         changebutton = true;
@@ -33,11 +44,11 @@ class _LoginPageState extends State<LoginPage> {
       // ignore: use_build_context_synchronously
       // print("first object");
 
-      setLogin(lr[0]['username'].toString(), lr[0]['password'].toString(),
-          lr[0]['role'].toString());
+      setLogin(loginform_username.text, loginform_password.text,
+          lrs.role.toString());
 
-      userInfo.username = lr[0]['username'].toString();
-      userInfo.role = lr[0]['role'].toString();
+      userInfo.username = loginform_username.text;
+      userInfo.role = lrs.role.toString();
       print(userInfo.role);
       Get.offNamed(userInfo.username == ""
           ? Routes.LOGIN
@@ -100,24 +111,13 @@ class _LoginPageState extends State<LoginPage> {
                           sleep(const Duration(seconds: 1));
                           if (value!.isEmpty) {
                             return "Usrename can not be empty";
-                          } else if (pass == "null") {
+                          } else if (!userThere) {
                             return "User name not mach";
                           } else {
                             return null;
                           }
                         },
                         onChanged: (value) async {
-                          LoginRequest tlr = LoginRequest(
-                              role: "",
-                              username: loginform_username.text,
-                              password: loginform_password.text);
-                          lr = await mongoDataBase.tryToLogin(tlr);
-                          print(lr.toString());
-                          if (lr.length != 0) {
-                            pass = lr[0]['password'].toString();
-                          } else {
-                            pass = "null";
-                          }
                           setState(() {});
                         },
                       ),
@@ -128,9 +128,9 @@ class _LoginPageState extends State<LoginPage> {
                             hintText: "Enter Password", labelText: "Password"),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            // pass = "";
                             return "password can not be empty";
-                          } else if (value != pass) {
+                          } else if (userThere &&
+                              lrs.success.toString() == "false") {
                             return "Enter corect password";
                           }
                           return null;
